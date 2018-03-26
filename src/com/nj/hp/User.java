@@ -88,8 +88,27 @@ public class User {
 		return str.replace("<space>", " ").replace("<maohao>", ":").replace("<fenhao>", ";").replace("<douhao>", ",")
 				.replace("<br>", "\n");
 	}
+	@Override
+	public boolean equals(Object obj) {
+		User user = (User) obj;
+		return name.equals(user.getName());
+	}
 	
-	
+	/*
+	 * 把字符串转换为User对象
+	 */
+	public static User fromString(String content) {
+		User user = new User();
+		String[] data = content.split(",");
+		user.setName(User.decode(data[0]));
+		user.setPassword(User.decode(data[1]));
+		user.setScore(Integer.parseInt(data[2]));
+		user.setHead(data[3]);
+		user.setViCount(Integer.parseInt(data[4]));
+		user.setDeCount(Integer.parseInt(data[5]));
+		user.setDrCount(Integer.parseInt(data[6]));
+		return user;
+	}
 	
 	
 }
