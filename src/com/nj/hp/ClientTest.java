@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ClientTest {
+	private static OutputStream os;
+
 	public static void main(String[] args) {
 		try {
 			final Socket socket = new Socket("192.168.16.122", 9898);
@@ -16,8 +18,11 @@ public class ClientTest {
 			user.setName("小明");
 			user.setPassword("1234");
 			System.out.println(user.toString());
-			OutputStream os = socket.getOutputStream();
-			os.write(("sign:" + user.toString() + "\r\n").getBytes("utf8"));
+			os = socket.getOutputStream();
+//			os.write(("login:" + user.toString() + "\r\n").getBytes("utf8"));
+////			os.flush();
+//			Thread.sleep(3000);
+			os.write(("findgame:\r\n").getBytes("utf8"));
 			os.flush();
 			new Thread(new Runnable() {
 				public void run() {
@@ -30,7 +35,6 @@ public class ClientTest {
 							System.out.println(data);
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

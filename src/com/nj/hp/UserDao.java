@@ -25,6 +25,7 @@ public class UserDao {
 	public void login(User user) throws Exception {
 		String sql = "select username,head,score,victory_count,defeat_count,draw_count from tb_user where username='"
 				+ user.getName() + "' and password='" + user.getPassword() + "'";
+		System.out.println(sql);
 		DbUtil db = new DbUtil();
 		try {
 			ResultSet resultSet = db.executeQuery(sql);

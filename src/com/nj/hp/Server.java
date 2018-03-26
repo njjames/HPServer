@@ -25,6 +25,7 @@ public class Server extends Thread{
 			while(isRunning) {
 				//serverSocket只有一个所以设置为静态变量，Socket每个客户端的连接都不一样，不能设置为静态的
 				Socket socket = serverSocket.accept();
+				System.out.println("收到一个数据");
 				//与客户端连接成功后，就开启一个线程，来处理服务器与客户端之间传递的数据，当然要把这个连接socket传递进去
 				es.execute(new ServerClient(socket));
 			}

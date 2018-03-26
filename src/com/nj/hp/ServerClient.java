@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * 服务器端处理客户端发来数据，以及给客户端发送数据的类
@@ -19,6 +20,9 @@ import java.util.ArrayList;
 public class ServerClient implements Runnable {
 	//在线的用户
 	private static ArrayList<ServerClient> onLineUsers = new ArrayList<>();
+	//正在匹配的用户
+	private static ArrayList<ServerClient> findGameUsers = new ArrayList<>();
+	
 	private Socket socket;
 	private User user;
 
@@ -58,6 +62,9 @@ public class ServerClient implements Runnable {
 				case "login":  //登录
 					login(content);
 					break;
+				case "findgame":  //进行匹配
+					findGame();
+					break;
 				default:
 					break;
 				}
@@ -67,6 +74,48 @@ public class ServerClient implements Runnable {
 		}
 	}
 
+	/*
+	 * 进行匹配
+	 * 
+	 */
+	private void findGame() {
+		System.out.println("正在匹配");
+		ServerClient other = null;
+		boolean noFound = true;
+		synchronized (findGameUsers) {
+			Iterator<ServerClient> iterator = findGameUsers.iterator();
+			while(iterator.hasNext()) {
+				other = iterator.next();
+				//如果是自己，就删除
+				if(other.equals(this)) {
+					iterator.remove();
+					continue;
+				}
+				//如果不是自己，并且还有其他人，就匹配
+				noFound = false;
+				iterator.remove();
+			}
+			//如果集合中循环一遍都没有可以匹配的，就把自己加入到匹配的集合中
+			if(noFound) {
+				if(!findGameUsers.contains(this)) {
+					findGameUsers.add(this);
+				}
+			}
+		}
+		if(!noFound) {
+			try {
+				sendLine("当前用户【" + user.getName() +"】匹配到了用户:【" + other.user.getName() + "】");
+				other.sendLine("当前用户【" + other.user.getName() +"】匹配到了用户:【" + user.getName() + "】");
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/*
+	 * 登录
+	 */
 	private void login(String content) {
 		UserDao userDao = new UserDao();
 		try {
@@ -82,7 +131,9 @@ public class ServerClient implements Runnable {
 			}
 		}
 	}
-
+	/*
+	 * 注册
+	 */
 	private void sign(String content) {
 		UserDao userDao = new UserDao();
 		try {
@@ -123,24 +174,51 @@ public class ServerClient implements Runnable {
 	 */
 	private void enLine() {
 		synchronized (onLineUsers) {
+			//判断这个用户当前是否在线
+			int pos = onLineUsers.indexOf(this);
+			if(pos != -1) {
+				System.out.println("重复登陆");
+				ServerClient client = onLineUsers.get(pos);
+				//提示异地登录
+				try {
+					sendLine("failed:异地登录");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				//把之前的用户下线
+				client.deLine();
+			}
 			onLineUsers.add(this);
 		}
 		System.out.println("用户:【" + user.getName() + "】进入了，当前在线人数：" + onLineUsers.size());
 	}
 	
+	/*
+	 * 下线
+	 */
 	private void deLine() {
+		//在线集合中移除
 		synchronized (onLineUsers) {
 			onLineUsers.remove(this);
 		}
+		//关闭socket
 		try {
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		//把当前用户设置为null
 		if(user != null) {
-			System.out.println("用户：【" + user.getName() + "】退出了，当前在线人数：" + onLineUsers.size());
+			System.out.println("用户:【" + user.getName() + "】退出了，当前在线人数：" + onLineUsers.size());
 		}
 		user = null;
 	}
-
+	
+	/*
+	 * 需要重写equals方法，否则集合中的元素都是不相等的，就会出现同一用户重复登录
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return user.equals(((ServerClient)obj).user);
+	}
 }
