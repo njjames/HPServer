@@ -5,10 +5,10 @@ public class GameUtil {
 
 	// 默认地图（棋盘），什么都没有
 	public static final int[][] DEFAULT_MAP = { 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+			{ 0, 0, 0, 0 },
+			{ 0, 0, 0, 0 }, 
+			{ 0, 0, 0, 0 }, 
+			{ 0, 0, 0, 0 }
 			};
 
 	public static int[][] cloneMap(int[][] map) {

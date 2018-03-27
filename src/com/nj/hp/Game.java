@@ -12,6 +12,12 @@ public class Game {
 	//玩家2
 	private ServerClient client2;
 	
+	//玩家1的牌数
+	public int count1;
+	
+	//玩家2的牌数
+	public int count2;
+	
 	//地图(也是当前的地图)
 	private int[][] map;
 	
@@ -25,6 +31,8 @@ public class Game {
 	}
 
 	private void startGame() {
+		this.count1 = 8;
+		this.count2 = 8;
 		this.step = 0;
 		this.lastmap = null;
 		this.map = GameUtil.cloneMap(GameUtil.DEFAULT_MAP);
@@ -102,7 +110,7 @@ public class Game {
 	public synchronized boolean walk(ServerClient client, Walk walk) {
 		//判断不是轮到自己走了
 		//获取走棋属于哪一方
-		int color = client.game.getMap()[walk.x1][walk.x2];
+		int color = map[walk.x1][walk.y1] /100;
 		if(color == 0) {
 			return false;
 		}
@@ -130,8 +138,29 @@ public class Game {
 			//如果可以走
 			//把当前的地图更新为上一次的地图
 			this.lastmap = GameUtil.cloneMap(map);
-			//更新走棋后的地图为当前地图
-			map[walk.x2][walk.y2] = map[walk.x1][walk.y1];
+			//得到移动前后牌的代码
+			int code1 = map[walk.x1][walk.y1] % 100;
+			int code2 = map[walk.x2][walk.y2] % 100;
+			//如果code2不是0，说明牌1和牌2会死掉一个，或者都死掉
+			if(code2 != 0) {
+				//两个相等，也就是对了，都去掉
+				if(code1 == code2) {
+					count1--;
+					count2--;
+					//对掉
+					map[walk.x2][walk.y2] = 0;
+				}else{ //这说明code1会吃掉code2
+					//如果这一步是玩家1走的，那么玩家2的牌数减1,否则玩家2牌数减1
+					if(color == 1) {
+						count2--;
+					}else {
+						count1--;
+					}
+					//吃掉
+					map[walk.x2][walk.y2] = map[walk.x1][walk.y1];
+				}
+			}
+			//之前的一步肯定是变成0
 			map[walk.x1][walk.y1] = 0;
 			this.step++;
 			return true;
@@ -143,5 +172,22 @@ public class Game {
 	@Override
 	public String toString() {
 		return "第" + step + "步";
+	}
+	
+	/*
+	 * 判断谁胜利，0表示和棋，1表示玩家1,2表示玩家2
+	 */
+	public int whoWin() {
+		if(count1 ==0 && count2 == 0) {
+			return 0;
+		}
+		if(count1 == 0 && count2 > 0) {
+			return 2;
+		}
+		if(count2 == 0 && count1 > 0) {
+			return 1;
+		}
+		return -1;
+		
 	}
 }
