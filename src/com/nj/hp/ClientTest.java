@@ -20,8 +20,11 @@ public class ClientTest {
 			System.out.println(user.toString());
 			os = socket.getOutputStream();
 			os.write(("login:" + user.toString() + "\r\n").getBytes("utf8"));
-			Thread.sleep(3000);
+//			Thread.sleep(3000);
 			os.write(("findgame:\r\n").getBytes("utf8"));
+			os.flush();
+			Thread.sleep(10000);
+			os.write(("giveup:\r\n").getBytes("utf8"));
 			os.flush();
 			
 			

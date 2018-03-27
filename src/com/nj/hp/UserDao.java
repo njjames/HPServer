@@ -46,4 +46,25 @@ public class UserDao {
 			db.close();
 		}
 	}
+
+	/*
+	 * 更新玩家信息
+	 */
+	public void update(User user) throws Exception {
+		String sql = "update tb_user set head='" + user.getHead() + 
+				"',score=" + user.getScore() + 
+				",victory_count=" + user.getViCount() + 
+				",defeat_count=" + user.getDeCount() + 
+				",draw_count=" + user.getDrCount() + 
+				" where username='"+ user.getName() + "'";
+		System.out.println(sql);
+		DbUtil db = new DbUtil();
+		try {
+			db.execute(sql);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			db.close();
+		}
+	}
 }

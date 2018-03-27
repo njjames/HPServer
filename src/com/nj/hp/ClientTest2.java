@@ -29,10 +29,10 @@ public class ClientTest2 {
 						Thread.sleep(1000);
 						OutputStream os = socket.getOutputStream();
 						os.write(("login:" + user.toString() + "\r\n").getBytes("utf8"));
-						Thread.sleep(5000);
+//						Thread.sleep(5000);
 						os = socket.getOutputStream();
 						os.write(("findgame:111" + "\r\n").getBytes("utf8"));
-						Thread.sleep(3000);
+//						Thread.sleep(3000);
 //						System.out.println("发送的线程结束了,时间是：" + System.currentTimeMillis());
 						//发送的线程结束了,时间是：1522116147471
 						//出现异常了，时间是：1522116147481
@@ -53,6 +53,10 @@ public class ClientTest2 {
 						String data = null;
 						while((data = bd.readLine()) != null) {
 							System.out.println(data);
+							if(data.contains("askPeace")) {
+								OutputStream os = socket.getOutputStream();
+								os.write(("agreepeace:\r\n").getBytes("utf8"));
+							}
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
