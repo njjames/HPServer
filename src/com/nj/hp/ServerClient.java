@@ -45,7 +45,8 @@ public class ServerClient implements Runnable {
 			InputStream is = socket.getInputStream();
 			BufferedReader bd = new BufferedReader(new InputStreamReader(is));
 			String data = null;
-			if((data = bd.readLine()) != null) {
+//			if((data = bd.readLine()) != null) {这就是为什么只能获取到一条数据，因为是if,fuck
+			while((data = bd.readLine()) != null) {
 				System.out.println(data);
 				//如果客户端发送归来的数据不是null，就按照：分割为数组，第一位是命令，第二位是内容
 				String[] tag = data.split(":");
@@ -70,6 +71,7 @@ public class ServerClient implements Runnable {
 				}
 			}
 		} catch (Exception e) {
+			System.out.println("出现异常了，时间是：" + System.currentTimeMillis());
 			e.printStackTrace();
 		}
 	}
@@ -84,6 +86,7 @@ public class ServerClient implements Runnable {
 		boolean noFound = true;
 		synchronized (findGameUsers) {
 			Iterator<ServerClient> iterator = findGameUsers.iterator();
+			System.out.println("正在匹配的人数是：" + findGameUsers.size());
 			while(iterator.hasNext()) {
 				other = iterator.next();
 				//如果是自己，就删除

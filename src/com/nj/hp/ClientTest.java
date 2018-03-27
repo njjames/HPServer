@@ -19,11 +19,12 @@ public class ClientTest {
 			user.setPassword("1234");
 			System.out.println(user.toString());
 			os = socket.getOutputStream();
-//			os.write(("login:" + user.toString() + "\r\n").getBytes("utf8"));
-////			os.flush();
-//			Thread.sleep(3000);
+			os.write(("login:" + user.toString() + "\r\n").getBytes("utf8"));
+			Thread.sleep(3000);
 			os.write(("findgame:\r\n").getBytes("utf8"));
 			os.flush();
+			
+			
 			new Thread(new Runnable() {
 				public void run() {
 					try {
@@ -31,7 +32,7 @@ public class ClientTest {
 						InputStream is = socket.getInputStream();
 						BufferedReader bd = new BufferedReader(new InputStreamReader(is));
 						String data = null;
-						if((data = bd.readLine()) != null) {
+						while((data = bd.readLine()) != null) {
 							System.out.println(data);
 						}
 					} catch (Exception e) {
@@ -39,6 +40,7 @@ public class ClientTest {
 					}
 				}
 			}).start();
+			while(true) {}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

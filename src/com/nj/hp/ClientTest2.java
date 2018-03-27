@@ -30,12 +30,18 @@ public class ClientTest2 {
 						OutputStream os = socket.getOutputStream();
 						os.write(("login:" + user.toString() + "\r\n").getBytes("utf8"));
 						Thread.sleep(5000);
-						OutputStream os2 = socket.getOutputStream();
-						os2.write(("findgame:111" + "\r\n").getBytes("utf8"));
+						os = socket.getOutputStream();
+						os.write(("findgame:111" + "\r\n").getBytes("utf8"));
+						Thread.sleep(3000);
+//						System.out.println("发送的线程结束了,时间是：" + System.currentTimeMillis());
+						//发送的线程结束了,时间是：1522116147471
+						//出现异常了，时间是：1522116147481
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					
+					while(true) {
+						
+					}
 				}
 			}).start();
 			new Thread(new Runnable() {
@@ -45,7 +51,7 @@ public class ClientTest2 {
 						InputStream is = socket.getInputStream();
 						BufferedReader bd = new BufferedReader(new InputStreamReader(is));
 						String data = null;
-						if((data = bd.readLine()) != null) {
+						while((data = bd.readLine()) != null) {
 							System.out.println(data);
 						}
 					} catch (Exception e) {
