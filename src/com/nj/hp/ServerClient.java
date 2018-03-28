@@ -102,14 +102,20 @@ public class ServerClient implements Runnable {
 		}
 		//发过来的内容是包含走棋之前和之后位置的字符串，转化为Walk
 		Walk walk = Walk.fromString(content);
-		//获取当前的地图，并获取到走棋之后牌的代码
-		int code = game.getMap()[walk.x2][walk.y2];
 		if(game.walk(this, walk)) {
 			try {
 				sendLine("game:" + game.toString());
 				game.getOther(this).sendLine("game:" + game.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+			int whoWin = game.whoWin();
+			if(whoWin == 0) {
+				gameOver(0, "双方都没有牌了，和棋");
+			}else if(whoWin == 1) {
+				gameOver(whoWin, "玩家1胜利");
+			}else if(whoWin == 2) {
+				gameOver(whoWin, "玩家2胜利");
 			}
 		}else {
 			try {

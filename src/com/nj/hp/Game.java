@@ -1,5 +1,7 @@
 package com.nj.hp;
 
+import java.util.ArrayList;
+
 public class Game {
 	//步数
 	private int step; 
@@ -24,6 +26,9 @@ public class Game {
 	//上一步棋牌的地图
 	private int[][] lastmap;
 	
+	//走棋的步骤
+	private ArrayList<Walk> walks;
+	
 	public Game(ServerClient client1, ServerClient client2) {
 		this.client1 = client1;
 		this.client2 = client2;
@@ -36,6 +41,7 @@ public class Game {
 		this.step = 0;
 		this.lastmap = null;
 		this.map = GameUtil.cloneMap(GameUtil.DEFAULT_MAP);
+		this.walks = new ArrayList<>();
 	}
 
 	public int getStep() {
@@ -150,7 +156,7 @@ public class Game {
 					//对掉
 					map[walk.x2][walk.y2] = 0;
 				}else{ //这说明code1会吃掉code2
-					//如果这一步是玩家1走的，那么玩家2的牌数减1,否则玩家2牌数减1
+					//如果这一步是玩家1走的，那么玩家2的牌数减1,否则玩家1牌数减1
 					if(color == 1) {
 						count2--;
 					}else {
@@ -163,6 +169,7 @@ public class Game {
 			//之前的一步肯定是变成0
 			map[walk.x1][walk.y1] = 0;
 			this.step++;
+			this.walks.add(walk);
 			return true;
 		}else {
 			return false;
@@ -171,11 +178,33 @@ public class Game {
 	
 	@Override
 	public String toString() {
-		return "第" + step + "步";
+		Walk w = null;
+		//如果走过棋了，就取出最后一次的一步，否则初始化一个
+		if(walks.size() > 0) {
+			w = walks.get(walks.size() - 1);
+		}else {
+			w = new Walk(-1, -1, -1, -1);
+		}
+		return step + ";" + w + ";" + getMapString();
 	}
 	
 	/*
-	 * 判断谁胜利，0表示和棋，1表示玩家1,2表示玩家2
+	 * 得到地图的字符串
+	 */
+	private String getMapString() {
+		StringBuffer s = new StringBuffer();
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 9; j++) {
+				s.append(map[i][j] + ",");
+			}
+		}
+		//删除最后一个逗号
+		s.delete(s.length() - 1, s.length());
+		return s.toString();
+	}
+
+	/*
+	 * 判断谁胜利，0表示和棋，1表示玩家1,2表示玩家2,-1表示未结束
 	 */
 	public int whoWin() {
 		if(count1 ==0 && count2 == 0) {
