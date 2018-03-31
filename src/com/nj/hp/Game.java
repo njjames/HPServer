@@ -193,8 +193,8 @@ public class Game {
 	 */
 	private String getMapString() {
 		StringBuffer s = new StringBuffer();
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 9; j++) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
 				s.append(map[i][j] + ",");
 			}
 		}

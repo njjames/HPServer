@@ -258,7 +258,9 @@ public class ServerClient implements Runnable {
 		if(!noFound) {
 			try {
 				sendLine("user:" + game.getUser());
+				sendLine("game:" + game.toString());
 				other.sendLine("user:" + other.game.getUser());
+				other.sendLine("game:" + game.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

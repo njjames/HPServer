@@ -12,7 +12,7 @@ public class ClientTest2 {
 	private static Socket socket;
 	public static void main(String[] args) {
 		try {
-			socket = new Socket("192.168.16.122", 9898);
+			socket = new Socket("124.239.181.34", 9898);
 			final User user = new User();
 			user.setName("小明哥");
 			user.setPassword("3353255");

@@ -13,7 +13,7 @@ public class ClientTest {
 
 	public static void main(String[] args) {
 		try {
-			final Socket socket = new Socket("192.168.16.122", 9898);
+			final Socket socket = new Socket("124.239.181.34", 9898);
 			User user = new User();
 			user.setName("小明");
 			user.setPassword("1234");
@@ -24,7 +24,7 @@ public class ClientTest {
 			os.write(("findgame:\r\n").getBytes("utf8"));
 			os.flush();
 			Thread.sleep(10000);
-			os.write(("giveup:\r\n").getBytes("utf8"));
+			os.write(("askpeace:\r\n").getBytes("utf8"));
 			os.flush();
 			
 			
