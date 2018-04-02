@@ -217,6 +217,11 @@ public class Game {
 			return 1;
 		}
 		return -1;
-		
+	}
+
+	public void select(int x, int y) {
+		this.lastmap = GameUtil.cloneMap(map);
+		map[x][y] = Math.abs(map[x][y]);
+		this.step++;
 	}
 }

@@ -83,12 +83,28 @@ public class ServerClient implements Runnable {
 				case "walk": //走棋
 					walk(content);
 					break;
+				case "select": //翻牌
+					select(content);
+					break;
 				default:
 					break;
 				}
 			}
 		} catch (Exception e) {
 			System.out.println("出现异常了，时间是：" + System.currentTimeMillis());
+			e.printStackTrace();
+		}
+	}
+
+	private void select(String content) {
+		try {
+			String[] split = content.split(",");
+			int x = Integer.parseInt(split[0]);
+			int y = Integer.parseInt(split[1]);
+			game.select(x, y);
+			sendLine("game:" + game.toString());
+			game.getOther(this).sendLine("game:" + game.toString());
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

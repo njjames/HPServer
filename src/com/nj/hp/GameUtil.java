@@ -5,10 +5,10 @@ public class GameUtil {
 
 	// 默认地图（棋盘），什么都没有
 	public static final int[][] DEFAULT_MAP = { 
-			{ 0, 0, 0, 0 },
-			{ 0, 0, 0, 0 }, 
-			{ 0, 0, 0, 0 }, 
-			{ 0, 0, 0, 0 }
+			{ -101, -102, -103, -104 },
+			{ -105, -106, -107, -108 }, 
+			{ -201, -202, -203, -204 }, 
+			{ -205, -206, -207, -208 }
 			};
 
 	public static int[][] cloneMap(int[][] map) {
@@ -33,6 +33,11 @@ public class GameUtil {
 		if(color1 == color2) {
 			return false;
 		}
+		//如果移动后的位置的没有翻开的牌，则不能移动
+		if(color2 < 0) {
+			return false;
+		}
+
 		//如果不是同一方，得到现在走棋前后牌的代码
 		int code1 = map[walk.x1][walk.y1] % 100;
 		int code2 = map[walk.x2][walk.y2] % 100;
@@ -56,13 +61,13 @@ public class GameUtil {
 				return false;
 			}
 			return true;
-		}else if(code1 != 0) {
+		}else if(code1 > 0) {
 			//如果下一步的比上一步的大，就不能动
 			if(code2 > code1) {
 				return false;
 			}
 			return true;
-		}else {
+		}else { //这里包括移动前是没有翻开的牌，或者没有牌
 			return false;
 		}
 	}
