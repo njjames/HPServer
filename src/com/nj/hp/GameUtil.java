@@ -1,8 +1,10 @@
 package com.nj.hp;
 
+import java.util.Random;
+
 public class GameUtil {
 	public static final int ELEPHANT = 8, LION = 7, TIGER = 6, LEOPARD = 5, WOLF = 4, DOG = 3, CAT = 2, MOUSE = 1;
-
+	
 	// 默认地图（棋盘），什么都没有
 	public static final int[][] DEFAULT_MAP = { 
 			{ -101, -102, -103, -104 },
@@ -46,7 +48,7 @@ public class GameUtil {
 		int x2 = walk.x2;
 		int y2 = walk.y2;
 		//如果横走或者竖走超过一个格子，return false
-		if((x2 - x1) > 1 || (y2 - y1) > 1) {
+		if(Math.abs(x2 - x1) > 1 || Math.abs(y2 - y1) > 1 || (Math.abs(x2 - x1) == 1 && Math.abs(y2 - y1) == 1)) {
 			return false;
 		}
 		if(code1 == ELEPHANT) {
@@ -77,6 +79,27 @@ public class GameUtil {
 	 */
 	private static int getColor(int code) {
 		return code / 100;
+	}
+
+	public static int[][] initMap() {
+		int[] pai = { 
+				-101, -102, -103, -104 ,-105, -106, -107, -108 , -201, -202, -203, -204, -205, -206, -207, -208
+			};
+		int[][] map = new int[4][4];
+		Random random = new Random();
+		for(int i=0;i<4;i++) {
+			for(int j=0;j<4;j++) {
+				int nextInt = random.nextInt(16 - 4 * i - j);
+				map[i][j] = pai[nextInt];
+				pai[nextInt] = pai[15 - 4 * i - j];
+			}
+		}
+		for(int i=0;i<4;i++) {
+			for(int j=0;j<4;j++) {
+				System.out.print(map[i][j] + ",");
+			}
+		}
+		return map;
 	}
 	
 }

@@ -40,7 +40,8 @@ public class Game {
 		this.count2 = 8;
 		this.step = 0;
 		this.lastmap = null;
-		this.map = GameUtil.cloneMap(GameUtil.DEFAULT_MAP);
+//		this.map = GameUtil.cloneMap(GameUtil.DEFAULT_MAP);
+		this.map = GameUtil.initMap();
 		this.walks = new ArrayList<>();
 	}
 
@@ -120,25 +121,26 @@ public class Game {
 		if(color == 0) {
 			return false;
 		}
+		//这里不用写了，因为这个事先不知道自己属于哪一方
 		//颜色1，表示玩家1走
-		if(color == 1) {
-			//如果当前走的不是玩家1，false
-			if(!client.equals(client1)) {
-				return false;
-			}
-			//如果步数是偶数，也不应该是玩家1走，false
-			if(step % 2 == 0) {
-				return false;
-			}
-		}
-		if(color == 2) {
-			if(!client.equals(client2)) {
-				return false;
-			}
-			if(step % 2 == 1) {
-				return false;
-			}
-		}
+//		if(color == 1) {
+//			//如果当前走的不是玩家1，false
+//			if(!client.equals(client1)) {
+//				return false;
+//			}
+//			//如果步数是偶数，也不应该是玩家1走，false
+//			if(step % 2 == 0) {
+//				return false;
+//			}
+//		}
+//		if(color == 2) {
+//			if(!client.equals(client2)) {
+//				return false;
+//			}
+//			if(step % 2 == 1) {
+//				return false;
+//			}
+//		}
 		//运行到这里，表示轮到自己走了，然后判断能否走这一步
 		if(GameUtil.canWalk(this.map, walk)) {
 			//如果可以走
@@ -157,7 +159,13 @@ public class Game {
 					map[walk.x2][walk.y2] = 0;
 				}else{ //这说明code1会吃掉code2
 					//如果这一步是玩家1走的，那么玩家2的牌数减1,否则玩家1牌数减1
-					if(color == 1) {
+//					if(color == 1) {
+//						count2--;
+//					}else {
+//						count1--;
+//					}
+					//如果当前做的是玩家1，就把玩家2的牌数减1，否则减去玩家1的牌数
+					if(client.equals(client1)) {
 						count2--;
 					}else {
 						count1--;
@@ -165,7 +173,11 @@ public class Game {
 					//吃掉
 					map[walk.x2][walk.y2] = map[walk.x1][walk.y1];
 				}
+			}else {
+				map[walk.x2][walk.y2] = map[walk.x1][walk.y1];
 			}
+			System.out.println("玩家1：" + client1.user.getName() + " 还剩的牌数：" + count1);
+			System.out.println("玩家2：" + client2.user.getName() + " 还剩的牌数：" + count2);
 			//之前的一步肯定是变成0
 			map[walk.x1][walk.y1] = 0;
 			this.step++;

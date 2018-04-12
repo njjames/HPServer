@@ -86,6 +86,9 @@ public class ServerClient implements Runnable {
 				case "select": //翻牌
 					select(content);
 					break;
+				case "otherside":  //确定对方是哪一边
+					otherSide(content);
+					break;
 				default:
 					break;
 				}
@@ -94,6 +97,16 @@ public class ServerClient implements Runnable {
 			System.out.println("出现异常了，时间是：" + System.currentTimeMillis());
 			e.printStackTrace();
 		}
+	}
+
+	private void otherSide(String content) {
+		try {
+			ServerClient other = game.getOther(this);
+			other.sendLine("othersideback:" + content);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void select(String content) {
@@ -204,8 +217,8 @@ public class ServerClient implements Runnable {
 		}
 		//发送数据到客户端
 		try {
-			sendLine("gameover:" + n + ";" + reason + ";");
-			game.getOther(this).sendLine("gameover:" + n + ";" + reason + ";");
+			sendLine("gameover:" + n + ";" + reason);
+			game.getOther(this).sendLine("gameover:" + n + ";" + reason);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
