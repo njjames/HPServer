@@ -1,6 +1,11 @@
 package com.nj.hp;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -89,6 +94,12 @@ public class ServerClient implements Runnable {
 				case "otherside":  //确定对方是哪一边
 					otherSide(content);
 					break;
+				case "version":
+					getNewVersion(); //获取最新的版本信息
+					break;
+				case "download":
+					downloadAPK();   //下载APK
+					break;
 				default:
 					break;
 				}
@@ -96,6 +107,65 @@ public class ServerClient implements Runnable {
 		} catch (Exception e) {
 			System.out.println("出现异常了，时间是：" + System.currentTimeMillis());
 			e.printStackTrace();
+		}
+	}
+
+	private void downloadAPK() {
+		DataInputStream dis = null;
+		DataOutputStream dos = null;
+		try {
+			//给客户端发送一个下载的标记，让客户端准备下载
+			sendLine("newApk");
+			//睡1S，让客户端准备好
+			Thread.sleep(1000);
+			//开始发送APK的数据
+			OutputStream os = socket.getOutputStream();
+			File file = new File("E://upload//HP//app-release.apk");
+			dis = new DataInputStream(new FileInputStream(file));
+			dos = new DataOutputStream(os);
+			int len = -1;
+			byte[] buf = new byte[2048];
+			while((len = dis.read(buf)) != -1) {
+				dos.write(buf, 0, len);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(dos != null) {
+					dos.close();
+				}
+				if(dis != null) {
+					dis.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void getNewVersion() {
+		BufferedReader br = null;
+		try {
+			File file = new File("E://upload//HP//version.txt");
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			String versionCode = br.readLine();
+			String versionName = br.readLine();
+			String code = versionCode.split(":")[1];
+			String name = versionName.split(":")[1];
+			File apkFile = new File("E://upload//HP//app-release.apk");
+			long length = apkFile.length();
+			sendLine("newversion:" + code + ";" + name + ";" + length);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
