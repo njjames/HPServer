@@ -1,0 +1,4 @@
+name,pass,score,head,viCount,deCount,drCount
+小明哥,3353255,0,1,0,0,0
+小明哥1,3353255,0,1,0,0,0
+小明哥2,3353255,0,1,0,0,0

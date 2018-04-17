@@ -2,7 +2,7 @@ package com.nj.hp;
 
 import java.sql.ResultSet;
 
-public class UserDao {
+public class UserDao implements Dao{
 	/*
 	 * 注册
 	 */
