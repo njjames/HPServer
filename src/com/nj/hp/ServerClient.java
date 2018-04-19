@@ -28,10 +28,13 @@ public class ServerClient implements Runnable {
 	//正在匹配的用户
 	private static ArrayList<ServerClient> findGameUsers = new ArrayList<>();
 	
+	private UserDao userDao = new UserDaoFileImpl();
+	
 	private Socket socket;
 	public User user;
 	public Game game;
 	private boolean isOK;
+	private int model;
 
 	public ServerClient(Socket socket) {
 		this.socket = socket;
@@ -71,7 +74,7 @@ public class ServerClient implements Runnable {
 					login(content);
 					break;
 				case "findgame":  //进行匹配
-					findGame();
+					findGame(content);
 					break;
 				case "askpeace":  //请求和棋
 					askPeace();
@@ -263,7 +266,6 @@ public class ServerClient implements Runnable {
 		}
 		User user1 = game.getUser1();
 		User user2 = game.getUser2();
-		UserDao userDao = new UserDao();
 		if(n == 0) { //和棋
 			user1.setDrCount(user1.getDrCount() + 1);
 			user2.setDrCount(user2.getDrCount() + 1);
@@ -316,7 +318,8 @@ public class ServerClient implements Runnable {
 	 * 进行匹配
 	 * 
 	 */
-	private void findGame() {
+	private void findGame(String content) {
+		model = Integer.parseInt(content);
 		System.out.println("正在匹配");
 		//把自己设置为就绪状态，可以被匹配到
 		isOK = true;
@@ -338,14 +341,17 @@ public class ServerClient implements Runnable {
 					continue;
 				}
 				//如果不是自己，并且还有其他人，就匹配，也就是说运行到这里就匹配成功了
-				//把是否匹配的标志设置为false
-				noFound = false;
-				//通过两个客户端，得到一个游戏对象，并设置给两个客户端
-				game = new Game(this, other);
-				other.game = game;
-				iterator.remove();
-				//找到之后就不用循环再找了
-				break;
+				//如果寻找的模式都一样，就匹配了
+				if(model == other.model) {
+					//把是否匹配的标志设置为false
+					noFound = false;
+					//通过两个客户端，得到一个游戏对象，并设置给两个客户端
+					game = new Game(this, other, model);
+					other.game = game;
+					iterator.remove();
+					//找到之后就不用循环再找了
+					break;
+				}
 			}
 			//如果集合中循环一遍都没有可以匹配的，就把自己加入到匹配的集合中
 			if(noFound) {
@@ -370,7 +376,6 @@ public class ServerClient implements Runnable {
 	 * 登录
 	 */
 	private void login(String content) {
-		UserDao userDao = new UserDao();
 		try {
 			user = User.fromString(content);
 			userDao.login(user);
@@ -388,7 +393,6 @@ public class ServerClient implements Runnable {
 	 * 注册
 	 */
 	private void sign(String content) {
-		UserDao userDao = new UserDao();
 		try {
 			//根据客户端发过来的用户信息，生成user对象
 			user = User.fromString(content);

@@ -18,7 +18,7 @@ public class DbUtil {
 		
 		User user1 = new User("小明哥2", "3353255", "1");
 		
-		UserDao  udDao = new UserDao();
+		UserDaoDBImpl  udDao = new UserDaoDBImpl();
 //		try {
 //			udDao.sign(user);
 //		} catch (Exception e) {

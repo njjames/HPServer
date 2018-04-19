@@ -1,7 +1,5 @@
 package com.nj.hp;
 
-import com.sun.org.apache.regexp.internal.recompile;
-
 public class User {
 	// 用户名
 	private String name;

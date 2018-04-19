@@ -2,7 +2,7 @@ package com.nj.hp;
 
 import java.util.ArrayList;
 
-public class Game {
+public class Game2 {
 	//步数
 	private int step; 
 	//步时
@@ -29,12 +29,9 @@ public class Game {
 	//走棋的步骤
 	private ArrayList<Walk> walks;
 	
-	private int model;
-	
-	public Game(ServerClient client1, ServerClient client2, int model) {
+	public Game2(ServerClient client1, ServerClient client2) {
 		this.client1 = client1;
 		this.client2 = client2;
-		this.model = model;
 		startGame();
 	}
 
@@ -43,13 +40,8 @@ public class Game {
 		this.count2 = 8;
 		this.step = 0;
 		this.lastmap = null;
-		if(model == 1) {
-			this.map = GameUtil.initMap();
-		}else if(model == 2) {
-			this.map = GameUtil.cloneMap(GameUtil.DEFAULT_MAP_MODEL2);
-		}
+		this.map = GameUtil.cloneMap(GameUtil.DEFAULT_MAP_MODEL2);
 		this.walks = new ArrayList<>();
-		
 	}
 
 	public int getStep() {
@@ -130,26 +122,26 @@ public class Game {
 		}
 		//这里不用写了，因为这个事先不知道自己属于哪一方
 		//颜色1，表示玩家1走
-//		if(color == 1) {
-//			//如果当前走的不是玩家1，false
-//			if(!client.equals(client1)) {
-//				return false;
-//			}
-//			//如果步数是偶数，也不应该是玩家1走，false
-//			if(step % 2 == 0) {
-//				return false;
-//			}
-//		}
-//		if(color == 2) {
-//			if(!client.equals(client2)) {
-//				return false;
-//			}
-//			if(step % 2 == 1) {
-//				return false;
-//			}
-//		}
+		if(color == 1) {
+			//如果当前走的不是玩家1，false
+			if(!client.equals(client1)) {
+				return false;
+			}
+			//如果步数是偶数，也不应该是玩家1走，false
+			if(step % 2 == 0) {
+				return false;
+			}
+		}
+		if(color == 2) {
+			if(!client.equals(client2)) {
+				return false;
+			}
+			if(step % 2 == 1) {
+				return false;
+			}
+		}
 		//运行到这里，表示轮到自己走了，然后判断能否走这一步
-		if(GameUtil.canWalk(this.map, walk, model)) {
+		if(GameUtil.canWalk(this.map, walk, 1)) {
 			//如果可以走
 			//把当前的地图更新为上一次的地图
 			this.lastmap = GameUtil.cloneMap(map);
@@ -212,8 +204,8 @@ public class Game {
 	 */
 	private String getMapString() {
 		StringBuffer s = new StringBuffer();
-		for (int i = 0; i < map.length; i++) {
-			for (int j = 0; j < map[i].length; j++) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
 				s.append(map[i][j] + ",");
 			}
 		}
@@ -226,39 +218,16 @@ public class Game {
 	 * 判断谁胜利，0表示和棋，1表示玩家1,2表示玩家2,-1表示未结束
 	 */
 	public int whoWin() {
-		if(model == 1) {
-			if(count1 ==0 && count2 == 0) {
-				return 0;
-			}
-			if(count1 == 0 && count2 > 0) {
-				return 2;
-			}
-			if(count2 == 0 && count1 > 0) {
-				return 1;
-			}
-			return -1;
-		}else if(model == 2) {
-			if(count1 ==0 && count2 == 0) {
-				return 0;
-			}
-			if(count1 == 0 && count2 > 0) {
-				return 2;
-			}
-			if(count2 == 0 && count1 > 0) {
-				return 1;
-			}
-			//如果玩家1的老巢被占了，则玩家2胜利
-			if(map[0][3] > 0) {
-				return 2;
-			}
-			if(map[8][3] > 0) {
-				return 1;
-			}
-			return -1;
-		}else {
-			return -1;
+		if(count1 ==0 && count2 == 0) {
+			return 0;
 		}
-		
+		if(count1 == 0 && count2 > 0) {
+			return 2;
+		}
+		if(count2 == 0 && count1 > 0) {
+			return 1;
+		}
+		return -1;
 	}
 
 	public void select(int x, int y) {
