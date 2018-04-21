@@ -23,6 +23,8 @@ import java.util.Iterator;
  *
  */
 public class ServerClient implements Runnable {
+	private static final int EAT = 1;
+	private static final int WALK = 2;
 	//在线的用户
 	private static ArrayList<ServerClient> onLineUsers = new ArrayList<>();
 	//正在匹配的用户
@@ -35,6 +37,7 @@ public class ServerClient implements Runnable {
 	public Game game;
 	private boolean isOK;
 	private int model;
+	private int walkType;
 
 	public ServerClient(Socket socket) {
 		this.socket = socket;
@@ -204,8 +207,14 @@ public class ServerClient implements Runnable {
 		}
 		//发过来的内容是包含走棋之前和之后位置的字符串，转化为Walk
 		Walk walk = Walk.fromString(content);
+		if(this.game.getMap()[walk.x2][walk.y2] > 0 ) {
+			walkType = EAT;
+		}else {
+			walkType = WALK;
+		}
 		if(game.walk(this, walk)) {
 			try {
+				sendLine("sound:" + walkType);
 				sendLine("game:" + game.toString());
 				game.getOther(this).sendLine("game:" + game.toString());
 			} catch (Exception e) {
