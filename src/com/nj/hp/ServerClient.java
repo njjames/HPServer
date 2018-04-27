@@ -106,13 +106,36 @@ public class ServerClient implements Runnable {
 				case "download":
 					downloadAPK();   //下载APK
 					break;
+				case "exit":
+					userExit(content);   //用户退出了
+					break;
 				default:
 					break;
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("出现异常了，时间是：" + System.currentTimeMillis());
-			e.printStackTrace();
+//			System.out.println("出现异常了，时间是：" + System.currentTimeMillis());
+//			e.printStackTrace();
+		}
+	}
+
+	private void userExit(String content) {
+		int type = Integer.parseInt(content);
+		if(type == 1) { //如果游戏的时候强退，则判负
+			escape();
+		}
+		//正常退出，没有正在游戏，直接掉线
+		deLine();
+	}
+
+	private void escape() {
+		if(game == null) {
+			return;
+		}
+		if(game.getUser1().equals(user)) {
+			gameOver(2, "玩家逃跑");
+		}else {
+			gameOver(1, "玩家逃跑");
 		}
 	}
 
@@ -298,8 +321,12 @@ public class ServerClient implements Runnable {
 		}
 		//发送数据到客户端
 		try {
-			sendLine("gameover:" + n + ";" + reason);
-			game.getOther(this).sendLine("gameover:" + n + ";" + reason);
+			if("玩家逃跑".equals(reason)) {
+				game.getOther(this).sendLine("gameover:" + n + ";" + reason);
+			}else {
+				sendLine("gameover:" + n + ";" + reason);
+				game.getOther(this).sendLine("gameover:" + n + ";" + reason);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

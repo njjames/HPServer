@@ -169,6 +169,14 @@ public class GameUtil {
 				if(isInTrap(x2, y2)) {
 					return true;
 				}
+				//如果老鼠在河里，并且下一步不在河里，并且存在棋牌，则不能走
+				if(isInRiver(x1, y1) && !isInRiver(x2, y2) && code2 > 0) {
+					return false;
+				}
+				//如果老鼠不在河里，下一步是河里的老鼠，则不能走
+				if(!isInRiver(x1, y1) && isInRiver(x2, y2) && code2 > 0) {
+					return false;
+				}
 				if(code2 > code1 && code2 != ELEPHANT) {
 					return false;
 				}

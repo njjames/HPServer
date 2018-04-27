@@ -159,7 +159,7 @@ public class Game {
 			//如果code2不是0，说明牌1和牌2会死掉一个，或者都死掉
 			if(code2 != 0) {
 				//两个相等，也就是对了，都去掉
-				if(code1 == code2) {
+				if(code1 == code2 && model == 1) {
 					count1--;
 					count2--;
 					//对掉

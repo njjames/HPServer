@@ -13,17 +13,30 @@ public class UserDaoFileImpl implements UserDao {
 
 	@Override
 	public void sign(User user) throws Exception {
+		BufferedReader br = null;
 		BufferedWriter bw = null;
 		try{
 			File file = new File("userconfig.txt");
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
+			br.readLine();
+	        String line = null;
+	        while((line = br.readLine()) != null) {
+	        	String[] split = line.split(",");
+	        	if(user.getName().equals(split[0])) {
+	        		throw new Exception("用户名已经存在");
+	        	}
+	        } 
 			FileOutputStream fos = new FileOutputStream(file, true);
-	        bw = new BufferedWriter(new OutputStreamWriter(fos));
-	        bw.write("\n" + user.toString());
+	        bw = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"));
+	        bw.write("\r\n" + user.toString());
 		} catch(Exception e) {
 			throw e;
 		} finally {
 			if(bw != null) {
 				bw.close();
+			}
+			if(br != null) {
+				br.close();
 			}
 		}
 	}
@@ -34,7 +47,7 @@ public class UserDaoFileImpl implements UserDao {
 		BufferedReader br = null;
 		try{
 			File file = new File("userconfig.txt");
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
 			br.readLine();
 			String line = null;
 			while((line = br.readLine()) != null) {
@@ -71,17 +84,17 @@ public class UserDaoFileImpl implements UserDao {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-	        bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpfile, true)));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
+	        bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpfile, true), "utf-8"));
 	        br.readLine();
-	        bw.write("name,pass,score,head,viCount,deCount,drCount\n");
+	        bw.write("name,pass,score,head,viCount,deCount,drCount\r\n");
 	        String line = null;
 	        while((line = br.readLine()) != null) {
 	        	String[] split = line.split(",");
 	        	if(user.getName().equals(split[0])) {
-	        		bw.write(user.toString() + "\n");
+	        		bw.write(user.toString() + "\r\n");
 	        	} else {
-	        		bw.write(line + "\n");
+	        		bw.write(line + "\r\n");
 	        	}
 	        }        
 		} catch (Exception e) {
